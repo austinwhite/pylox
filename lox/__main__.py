@@ -1,5 +1,6 @@
 from sys import argv
-from lox import Lox
+
+from lox.lox import Lox
 
 
 def main(args) -> None:
