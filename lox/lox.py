@@ -2,7 +2,10 @@ from pathlib import Path
 from sys import stderr
 
 from lox.scanner import Scanner
+from lox.parser import Parser
 from lox.errors import Error
+
+from lox.ast_printer import AstPrinter
 
 
 class Lox:
@@ -37,8 +40,13 @@ class Lox:
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
 
-        for token in tokens:
-            print(token)
+        parser = Parser(tokens)
+        expression = parser.parse()
+
+        if (Error.had_error):
+            return None
+        
+        print(AstPrinter().print(expression))
 
     @staticmethod
     def usage(error_code: int) -> None:

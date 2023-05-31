@@ -1,25 +1,19 @@
 from abc import ABC, abstractmethod
 
-from tokens import Token
+from lox.tokens import Token
 
 
 __all__ = [
     "ExprVisitor",
     "Expr",
-    "Assign",
     "Binary",
     "Grouping",
     "Literal",
     "Unary",
-    "Variable",
 ]
 
 
 class ExprVisitor(ABC):
-    @abstractmethod
-    def visit_assign_expr(self, expr: 'Expr'):
-        raise NotImplementedError
-
     @abstractmethod
     def visit_binary_expr(self, expr: 'Expr'):
         raise NotImplementedError
@@ -36,24 +30,11 @@ class ExprVisitor(ABC):
     def visit_unary_expr(self, expr: 'Expr'):
         raise NotImplementedError
 
-    @abstractmethod
-    def visit_variable_expr(self, expr: 'Expr'):
-        raise NotImplementedError
-
 
 class Expr(ABC):
     @abstractmethod
     def accept(visitor: ExprVisitor):
         raise NotImplementedError
-
-
-class Assign(Expr):
-    def __init__(self, name: Token, value: Expr):
-        self.name = name
-        self.value = value
-
-    def accept(self, visitor: ExprVisitor):
-        return visitor.visit_assign_expr(self)
 
 
 class Binary(Expr):
@@ -89,11 +70,3 @@ class Unary(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visit_unary_expr(self)
-
-
-class Variable(Expr):
-    def __init__(self, name: Token):
-        self.name = name
-
-    def accept(self, visitor: ExprVisitor):
-        return visitor.visit_variable_expr(self)
