@@ -1,24 +1,32 @@
-from lox import expressions
+from lox.expression import Expression, Assign, Binary, Grouping, Literal, Unary, Variable
 from lox.tokens import Token, TokenType
 
 
-class AstPrinter(expressions.ExprVisitor):
-    def print(self, expr: expressions.Expr):
-        return expr.accept(self)
+class AstPrinter:
+    def print(self, expression: Expression):
+        return expression.accept(self)
 
-    def parenthesize(self, name: str, *exprs: expressions.Expr) -> str:
-        content = ' '.join(expr.accept(self) for expr in exprs)
+    def visit_binary_expression(self, expression: Binary):
+        return self.parenthesize(expression.operator.lexeme, expression.left, expression.right)
 
-        return f'({name} {content})'
+    def visit_grouping_expression(self, expression: Grouping):
+        return self.parenthesize('group', expression.expression)
 
-    def visit_binary_expr(self, expr: expressions.Binary) -> str:
-        return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)
+    def visit_literal_expression(self, expression: Literal):
+        return str(expression.value)
 
-    def visit_grouping_expr(self, expr: expressions.Grouping) -> str:
-        return self.parenthesize('group', expr.expression)
+    def visit_unary_expression(self, expression: Unary):
+        return self.parenthesize(expression.operator.lexeme, expression.right)
 
-    def visit_literal_expr(self, expr: expressions.Literal) -> str:
-        return str(expr.value)
+    def parenthesize(self, name, *expressions):
+        fragments = []
+        fragments.append('(')
+        fragments.append(name)
 
-    def visit_unary_expr(self, expr: expressions.Unary) -> str:
-        return self.parenthesize(expr.operator.lexeme, expr.right)
+        for expression in expressions:
+            fragments.append(' ')
+            fragments.append(expression.accept(self))
+            
+        fragments.append(')')
+
+        return ''.join(fragments)

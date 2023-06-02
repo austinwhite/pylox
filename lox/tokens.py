@@ -1,7 +1,9 @@
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class TokenType(Enum):
+    # Single-character tokens.
     LEFT_PAREN = 1
     RIGHT_PAREN = 2
     LEFT_BRACE = 3
@@ -14,7 +16,7 @@ class TokenType(Enum):
     SLASH = 10
     STAR = 11
 
-    # One or two character tokens
+    # One or two character tokens.
     BANG = 12
     BANG_EQUAL = 13
     EQUAL = 14
@@ -24,12 +26,12 @@ class TokenType(Enum):
     LESS = 18
     LESS_EQUAL = 19
 
-    # Literals
+    # Literals.
     IDENTIFIER = 20
     STRING = 21
     NUMBER = 22
 
-    # Keywords
+    # Keywords.
     AND = 23
     CLASS = 24
     ELSE = 25
@@ -50,16 +52,35 @@ class TokenType(Enum):
     EOF = 39
 
 
+keywords = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
+
+
 class Token:
-    def __init__(self, type: TokenType, lexeme: str, literal, line: int):
+    def __init__(self, type: TokenType, lexeme: str, literal: str, line: int) -> None:
         self.type = type
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
 
     def __str__(self) -> str:
-        return f'{self.type}: {self.lexeme}, {self.literal}, {self.line}'
+        return f"{self.type} {self.lexeme} {self.literal}"
 
     def __repr__(self) -> str:
-        props = f'{self.type}, {self.lexeme}, {self.literal}, {self.line}'
-        return f'{self.__class__.__name__}({props})'
+        return f"{self.type} {self.lexeme} {self.literal}"
