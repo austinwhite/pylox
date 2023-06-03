@@ -34,7 +34,7 @@ def define_ast(writer: TextIO, base_name: str, types: List[str]) -> None:
     writer.write(f"class {base_name}(ABC):\n")
     writer.write(f"    @abstractmethod\n")
     writer.write(
-        f"    def accept(self, visitor: {base_name}Visitor) -> None:\n")
+        f"    def accept(self, visitor: {base_name}Visitor):\n")
     writer.write(f"        pass\n")
 
     for type in types:
@@ -51,7 +51,7 @@ def define_visitor(writer: TextIO, base_name: str, types: List[str]) -> None:
         type_name = type.split(':', maxsplit=1)[0].strip()
         writer.write(f"    @abstractmethod\n")
         writer.write(
-            f"    def visit_{type_name.lower()}_{base_name.lower()}(self, {base_name.lower()}) -> None:\n")
+            f"    def visit_{type_name.lower()}_{base_name.lower()}(self, {base_name.lower()}: 'Expression'):\n")
         writer.write(f"        pass\n\n")
 
 

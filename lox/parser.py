@@ -1,10 +1,11 @@
 from sys import stderr
+from typing import List
 from lox.tokens import Token, TokenType
 from lox.expression import Expression, Binary, Unary, Literal, Grouping
 
 
 class ParseError(RuntimeError):
-    def __init__(self, token: TokenType, message: str):
+    def __init__(self, token: Token, message: str):
         self.token = token
         self.message = message
 
@@ -20,7 +21,7 @@ class ParseError(RuntimeError):
 
 
 class Parser:
-    def __init__(self, tokens):
+    def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.current = 0
 
@@ -43,22 +44,22 @@ class Parser:
 
         return expr
 
-    def match(self, *types: TokenType) -> bool:
-        for type in types:
-            if self.check(type):
+    def match(self, *typs: TokenType) -> bool:
+        for typ in typs:
+            if self.check(typ):
                 self.advance()
                 return True
 
         return False
 
-    def check(self, type: TokenType) -> bool:
+    def check(self, typ: TokenType) -> bool:
         if self.is_at_end():
             return False
 
-        return self.peek().type == type
+        return self.peek().type == typ
 
     def advance(self) -> Token:
-        if self.is_at_end():
+        if not self.is_at_end():
             self.current += 1
 
         return self.previous()
@@ -78,7 +79,7 @@ class Parser:
         while self.match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
             operator = self.previous()
             right = self.term()
-            
+
             expr = Binary(expr, operator, right)
 
         return expr
@@ -126,11 +127,11 @@ class Parser:
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expr)
-        
+
         raise self.error(self.peek(), "Expect expression.")
 
-    def consume(self, type: TokenType, message: str) -> Token:
-        if self.check(type):
+    def consume(self, typ: TokenType, message: str) -> Token:
+        if self.check(typ):
             return self.advance()
 
         raise self.error(self.peek(), message)
@@ -147,22 +148,16 @@ class Parser:
             if self.previous.type == TokenType.SEMICOLON:
                 return
 
-            match self.peek().type:
-                case TokenType.CLASS:
-                    pass
-                case TokenType.FUN:
-                    pass
-                case TokenType.VAR:
-                    pass
-                case TokenType.FOR:
-                    pass
-                case TokenType.IF:
-                    pass
-                case TokenType.WHILE:
-                    pass
-                case TokenType.PRINT:
-                    pass
-                case TokenType.RETURN:
-                    pass
+            if self.peek().type in (
+                TokenType.CLASS,
+                TokenType.FUNCTION,
+                TokenType.VAR,
+                TokenType.FOR,
+                TokenType.IF,
+                TokenType.WHILE,
+                TokenType.PRINT,
+                TokenType.RETURN,
+            ):
+                return
 
             self.advance()

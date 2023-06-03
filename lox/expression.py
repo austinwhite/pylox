@@ -16,33 +16,33 @@ __all__ = [
 
 class ExpressionVisitor(ABC):
     @abstractmethod
-    def visit_assign_expression(self, expression) -> None:
+    def visit_assign_expression(self, expression: 'Expression'):
         pass
 
     @abstractmethod
-    def visit_binary_expression(self, expression) -> None:
+    def visit_binary_expression(self, expression: 'Expression'):
         pass
 
     @abstractmethod
-    def visit_grouping_expression(self, expression) -> None:
+    def visit_grouping_expression(self, expression: 'Expression'):
         pass
 
     @abstractmethod
-    def visit_literal_expression(self, expression) -> None:
+    def visit_literal_expression(self, expression: 'Expression'):
         pass
 
     @abstractmethod
-    def visit_unary_expression(self, expression) -> None:
+    def visit_unary_expression(self, expression: 'Expression'):
         pass
 
     @abstractmethod
-    def visit_variable_expression(self, expression) -> None:
+    def visit_variable_expression(self, expression: 'Expression'):
         pass
 
 
 class Expression(ABC):
     @abstractmethod
-    def accept(self, visitor: ExpressionVisitor) -> None:
+    def accept(self, visitor: ExpressionVisitor):
         pass
 
 

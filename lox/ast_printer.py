@@ -1,5 +1,4 @@
 from lox.expression import Expression, Assign, Binary, Grouping, Literal, Unary, Variable
-from lox.tokens import Token, TokenType
 
 
 class AstPrinter:
