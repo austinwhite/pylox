@@ -57,7 +57,6 @@ def define_visitor(writer: TextIO, base_name: str, types: List[str]) -> None:
 
 def define_type(writer: TextIO, base_name: str, class_name: str, instance_vars: str) -> None:
     writer.write(f"class {class_name}({base_name}):\n")
-
     writer.write(f"    def __init__(self, {instance_vars}) -> None:\n")
 
     vars = instance_vars.split(", ")
