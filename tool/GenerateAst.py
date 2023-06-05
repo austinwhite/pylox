@@ -78,16 +78,30 @@ def main(args) -> None:
 
     output_file = Path(args[0]).resolve()
 
-    write_ast(output_file, "Expression",
-              {"abc": "ABC, abstractmethod", "lox.tokens": "Token", "typing": "Any"},
-              [
-                  'Assign   : name: Token, value: Expression',
-                  'Binary   : left: Expression, operator: Token, right: Expression',
-                  'Grouping : expression: Expression',
-                  'Literal  : value: Any',
-                  'Unary    : operator: Token, right: Expression',
-                  'Variable : name: Token',
-              ])
+    write_ast(output_file, "Expression", {
+        "abc": "ABC, abstractmethod",
+        "lox.tokens": "Token",
+        "typing": "Any"
+    }, [
+        'Assign   : name: Token, value: Expression',
+        'Binary   : left: Expression, operator: Token, right: Expression',
+        'Grouping : expression: Expression',
+        'Literal  : value: Any',
+        'Unary    : operator: Token, right: Expression',
+        'Variable : name: Token',
+    ])
+
+    write_ast(output_file, 'Statement', {
+        "abc": "ABC, abstractmethod",
+        'typing': 'List',
+        'tokens': 'Token',
+        'lox.expression': 'Expression, ExpressionVisitor',
+    }, [
+        'Block      : statements: List[Statement]',
+        'Expression : expression: Expression',
+        'Print      : expression: Expression',
+        'Var        : name: Token, initializer: Expression',
+    ])
 
 
 if __name__ == "__main__":

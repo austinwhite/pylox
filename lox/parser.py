@@ -2,6 +2,7 @@ from sys import stderr
 from typing import List
 from lox.tokens import Token, TokenType
 from lox.expression import Expression, Binary, Unary, Literal, Grouping
+from lox.statement import Statement
 
 
 class ParseError(RuntimeError):

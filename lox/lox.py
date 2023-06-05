@@ -2,11 +2,14 @@ from pathlib import Path
 from sys import stderr
 from lox.scanner import Scanner
 from lox.parser import Parser
+from lox.interpreter import Interpreter, LoxRuntimeError
 from lox.ast_printer import AstPrinter
 
 
 class Lox:
+    interpreter = Interpreter()
     had_error = False
+    had_runtime_error = False
 
     @staticmethod
     def print_repl_intro() -> str:
@@ -21,6 +24,9 @@ class Lox:
 
         if Lox.had_error:
             exit(65)
+
+        if Lox.had_runtime_error:
+            exit(70)
 
     @staticmethod
     def run_repl() -> None:
@@ -50,12 +56,19 @@ class Lox:
 
         if cls.had_error:
             return None
-        
+
+        Lox.interpreter.interpret(expression)
+
         print(AstPrinter().print(expression))
 
     @staticmethod
     def error(line: int, message: str) -> None:
         Lox.report(line, "", message)
+
+    @staticmethod
+    def runtime_error(error: LoxRuntimeError) -> None:
+        stderr.write(f"{error}\n[line {error.token.line}]")
+        Lox.had_runtime_error = True
 
     @classmethod
     def report(cls, line: int, where: str, message: str) -> None:
