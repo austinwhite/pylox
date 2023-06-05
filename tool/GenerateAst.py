@@ -94,7 +94,7 @@ def main(args) -> None:
     write_ast(output_file, 'Statement', {
         "abc": "ABC, abstractmethod",
         'typing': 'List',
-        'tokens': 'Token',
+        'lox.tokens': 'Token',
         'lox.expression': 'Expression, ExpressionVisitor',
     }, [
         'Block      : statements: List[Statement]',

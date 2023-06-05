@@ -52,14 +52,12 @@ class Lox:
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
         parser = Parser(tokens)
-        expression = parser.parse()
+        statements = parser.parse()
 
         if cls.had_error:
             return None
 
-        Lox.interpreter.interpret(expression)
-
-        print(AstPrinter().print(expression))
+        Lox.interpreter.interpret(statements)
 
     @staticmethod
     def error(line: int, message: str) -> None:

@@ -1,6 +1,7 @@
-from typing import Any
+from typing import List, Any
 from lox.tokens import Token, TokenType
-from lox.expression import Expression, ExpressionVisitor, Literal, Grouping, Unary, Binary, Assign, Variable
+from lox.expression import Expression as ExprExpression, Expression, ExpressionVisitor, Literal, Grouping, Unary, Binary, Assign, Variable
+from lox.statement import Expression as StmtExpression, Expression, Statement, StatementVisitor
 
 
 class LoxRuntimeError(Exception):
@@ -15,11 +16,11 @@ class LoxRuntimeError(Exception):
         return super().__repr__()
 
 
-class Interpreter(Expression):
-    def interpret(self, expr: Expression):
+class Interpreter(ExpressionVisitor, StatementVisitor):
+    def interpret(self, statements: List[Statement]):
         try:
-            value = self.evaluate(expr)
-            print(self.stringify(value))
+            for statement in statements:
+                self.execute(statement)
         except RuntimeError as error:
             raise LoxRuntimeError(error)
 
@@ -84,8 +85,26 @@ class Interpreter(Expression):
         # Unreachable
         return None
 
-    def evaluate(self, expr: Expression) -> Any:
+    def evaluate(self, expr: ExprExpression) -> Any:
         return expr.accept(self)
+    
+    def execute(self, stmt: Statement) -> Any:
+        return stmt.accept(self)
+    
+    def visit_expression_statement(self, statement: StmtExpression):
+        self.evaluate(statement.expression)
+        return None
+    
+    def visit_print_statement(self, statement: StmtExpression):
+        value = self.evaluate(statement.expression)
+        print(self.stringify(value))
+        return None
+
+    def visit_block_statement(self, statement: Expression):
+        return super().visit_block_statement(statement)
+    
+    def visit_var_statement(self, statement: Expression):
+        return super().visit_var_statement(statement)
 
     def truthy(self, value: Any) -> bool:
         # false & nil are falsey, anything else is truthy

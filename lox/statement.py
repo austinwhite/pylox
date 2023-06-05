@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from tokens import Token
+from lox.tokens import Token
 from lox.expression import Expression, ExpressionVisitor
 
 

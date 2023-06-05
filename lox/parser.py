@@ -1,8 +1,8 @@
 from sys import stderr
-from typing import List
+from typing import List, Any
 from lox.tokens import Token, TokenType
-from lox.expression import Expression, Binary, Unary, Literal, Grouping
-from lox.statement import Statement
+from lox.expression import Expression as ExprExpression, Binary, Unary, Literal, Grouping
+from lox.statement import Expression as StmtExpression, Statement, Print
 
 
 class ParseError(RuntimeError):
@@ -27,15 +27,33 @@ class Parser:
         self.current = 0
 
     def parse(self) -> None:
-        try:
-            return self.expression()
-        except (ParseError):
-            return None
+        statements = []
 
-    def expression(self) -> Expression:
+        while not self.is_at_end():
+            statements.append(self.statement())
+
+        return statements
+
+    def expression(self) -> ExprExpression:
         return self.equality()
 
-    def equality(self) -> Expression:
+    def statement(self) -> Statement:
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
+        return self.expression_statement()
+
+    def print_statement(self) -> Any:
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def expression_statement(self) -> Statement:
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        return StmtExpression(expr)
+
+    def equality(self) -> ExprExpression:
         expr = self.comparison()
 
         while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
@@ -74,7 +92,7 @@ class Parser:
     def previous(self) -> Token:
         return self.tokens[self.current - 1]
 
-    def comparison(self) -> Expression:
+    def comparison(self) -> ExprExpression:
         expr = self.term()
 
         while self.match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
@@ -85,7 +103,7 @@ class Parser:
 
         return expr
 
-    def term(self) -> Expression:
+    def term(self) -> ExprExpression:
         expr = self.factor()
 
         while self.match(TokenType.MINUS, TokenType.PLUS):
@@ -95,7 +113,7 @@ class Parser:
 
         return expr
 
-    def factor(self) -> Expression:
+    def factor(self) -> ExprExpression:
         expr = self.unary()
 
         while self.match(TokenType.SLASH, TokenType.STAR):
@@ -105,7 +123,7 @@ class Parser:
 
         return expr
 
-    def unary(self) -> Expression:
+    def unary(self) -> ExprExpression:
         if self.match(TokenType.BANG, TokenType.MINUS):
             operator = self.previous()
             right = self.unary()
@@ -113,7 +131,7 @@ class Parser:
 
         return self.primary()
 
-    def primary(self) -> Expression:
+    def primary(self) -> ExprExpression:
         if self.match(TokenType.FALSE):
             return Literal(False)
         elif self.match(TokenType.TRUE):
